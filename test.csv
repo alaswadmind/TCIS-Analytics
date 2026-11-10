@@ -1,0 +1,16 @@
+complaint_id,created_at,region,channel,service,complaint_text,sentiment,is_complaint,severity,category_l1,category_l2,category_l3
+TCIS001,2026-11-08 08:10:00,Taiz,Mobile App,Internet,The internet has not been working since this morning even though I paid for my subscription.,negative,1,high,Network,Service Outage,Internet Outage
+TCIS002,2026-11-08 08:25:00,Taiz,Call Center,Internet,The internet speed is extremely slow and I cannot stream videos.,negative,1,medium,Network,Slow Service,Slow Internet
+TCIS003,2026-11-08 08:40:00,Sanaa,WhatsApp,Calls,My calls keep dropping and I cannot complete my conversations.,negative,1,high,Network,Call Quality,Dropped Calls
+TCIS004,2026-11-08 09:00:00,Ibb,Mobile App,Balance,My balance was deducted even though I did not make any calls or use any services.,negative,1,medium,Billing,Balance Deduction,Unauthorized Deduction
+TCIS005,2026-11-08 09:15:00,Taiz,Call Center,Internet,Please improve the internet speed in our area because the service has become very slow.,negative,1,medium,Network,Slow Service,Slow Internet
+TCIS006,2026-11-08 09:30:00,Hodeidah,WhatsApp,Network,There has been no network coverage in our neighborhood for more than an hour.,negative,1,critical,Network,Service Outage,Network Coverage Outage
+TCIS007,2026-11-08 09:45:00,Sanaa,Mobile App,Subscription,How can I check when my current internet package expires?,neutral,0,low,Inquiries,Packages,Package Expiration
+TCIS008,2026-11-08 10:00:00,Ibb,Call Center,Billing,My bill is higher than usual and I would like an explanation of the charges.,negative,1,medium,Billing,Bill Dispute,Incorrect Bill Amount
+TCIS009,2026-11-08 10:15:00,Taiz,WhatsApp,Internet,The internet connection has suddenly stopped working for all homes on our street.,negative,1,critical,Network,Service Outage,Internet Outage
+TCIS010,2026-11-08 10:30:00,Aden,Mobile App,Calls,The voice quality is poor during calls and there is constant interference.,negative,1,medium,Network,Call Quality,Call Interference
+TCIS011,2026-11-08 11:00:00,Hodeidah,Call Center,Internet,The connection issue has been resolved and the internet speed is excellent now.,positive,0,low,Technical Support,Issue Resolution,Service Restoration Confirmation
+TCIS012,2026-11-08 11:15:00,Taiz,WhatsApp,Network,The network is down for a large number of subscribers in our area.,negative,1,critical,Network,Service Outage,Network Coverage Outage
+TCIS013,2026-11-08 11:30:00,Sanaa,Mobile App,Balance,How can I check the remaining balance in my account?,neutral,0,low,Inquiries,Balance,Balance Inquiry
+TCIS014,2026-11-08 11:45:00,Aden,Call Center,Internet,I paid for my internet package but the service has not been activated yet.,negative,1,high,Subscriptions,Package Activation,Activation Delay
+TCIS015,2026-11-08 12:00:00,Taiz,WhatsApp,Internet,The internet is working well today and I would like to thank the support team for their help.,positive,0,low,Technical Support,Service Feedback,Customer Satisfaction

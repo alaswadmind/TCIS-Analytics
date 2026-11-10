@@ -1,0 +1,258 @@
+{
+  "services_to_l2": {
+    "internet_service": [
+      "internet_connection_problems",
+      "internet_equipment_problems",
+      "internet_installation_problems",
+      "internet_speed_problems"
+    ],
+    "number_sim": [
+      "account_access",
+      "number_lost",
+      "number_porting",
+      "sim_activation",
+      "sim_swap"
+    ],
+    "mobile_data": [
+      "mobile_data_connectivity",
+      "mobile_data_plan_usage",
+      "mobile_data_speed"
+    ],
+    "customer_support": [
+      "support_channel",
+      "support_delayed",
+      "support_poor",
+      "support_unhelpful",
+      "support_unresolved"
+    ],
+    "tv_media": [
+      "tv_channels",
+      "tv_dvr",
+      "tv_outage",
+      "tv_quality",
+      "tv_streaming"
+    ],
+    "billing_payments": [
+      "billing_balance",
+      "billing_duplicate",
+      "billing_incorrect",
+      "billing_payment_failure",
+      "billing_refund",
+      "billing_unexpected"
+    ],
+    "voice_calling": [
+      "voice_call_drops",
+      "voice_call_failure",
+      "voice_call_quality",
+      "voice_international",
+      "voice_voicemail"
+    ],
+    "technical_support": [
+      "tech_appointment",
+      "tech_repair_delay",
+      "tech_repeated_failures",
+      "tech_troubleshooting",
+      "tech_unresolved"
+    ],
+    "mobile_network": [
+      "mobile_call_connection_problems",
+      "mobile_coverage_problems",
+      "mobile_network_outage"
+    ],
+    "device_equipment": [
+      "device_failure",
+      "device_lost_stolen",
+      "device_network_lock",
+      "device_setup",
+      "device_warranty"
+    ],
+    "subscription_plans": [
+      "plan_activation",
+      "plan_cancellation",
+      "plan_changes",
+      "plan_pricing",
+      "plan_renewal"
+    ],
+    "roaming_international": [
+      "roaming_calls",
+      "roaming_charges",
+      "roaming_connectivity"
+    ],
+    "other_services": [
+      "other_unspecified"
+    ]
+  },
+  "l2_to_l3": {
+    "internet_speed_problems": [
+      "internet_service.internet_speed_problems.high_latency_buffering",
+      "internet_service.internet_speed_problems.slow_internet",
+      "internet_service.internet_speed_problems.speed_below_expected"
+    ],
+    "internet_connection_problems": [
+      "internet_service.internet_connection_problems.frequent_disconnection",
+      "internet_service.internet_connection_problems.no_internet_connection",
+      "internet_service.internet_connection_problems.service_outage",
+      "internet_service.internet_connection_problems.unstable_connection"
+    ],
+    "voice_call_drops": [
+      "voice_calling.voice_call_drops.call_drops"
+    ],
+    "internet_equipment_problems": [
+      "internet_service.internet_equipment_problems.modem_failure",
+      "internet_service.internet_equipment_problems.router_failure",
+      "internet_service.internet_equipment_problems.wi_fi_coverage_problem"
+    ],
+    "mobile_data_connectivity": [
+      "mobile_data.mobile_data_connectivity.hotspot_tethering_failure",
+      "mobile_data.mobile_data_connectivity.mobile_data_not_working"
+    ],
+    "sim_swap": [
+      "number_sim.sim_swap.sim_swap_problem",
+      "number_sim.sim_swap.wrong_sim_issued"
+    ],
+    "support_unresolved": [
+      "customer_support.support_unresolved.escalation_failure",
+      "customer_support.support_unresolved.repeated_contact_required",
+      "customer_support.support_unresolved.unresolved_complaint"
+    ],
+    "support_delayed": [
+      "customer_support.support_delayed.long_wait_time",
+      "customer_support.support_delayed.no_response"
+    ],
+    "support_unhelpful": [
+      "customer_support.support_unhelpful.no_resolution",
+      "customer_support.support_unhelpful.unhelpful_response"
+    ],
+    "billing_balance": [
+      "billing_payments.billing_balance.credit_balance_dispute",
+      "billing_payments.billing_balance.incorrect_balance",
+      "billing_payments.billing_balance.outstanding_amount_dispute"
+    ],
+    "mobile_coverage_problems": [
+      "mobile_network.mobile_coverage_problems.no_service_dead_zone",
+      "mobile_network.mobile_coverage_problems.poor_network_coverage"
+    ],
+    "support_channel": [
+      "customer_support.support_channel.chat_dm_failure",
+      "customer_support.support_channel.transfer_hold_problem"
+    ],
+    "mobile_data_speed": [
+      "mobile_data.mobile_data_speed.slow_mobile_data",
+      "mobile_data.mobile_data_speed.throttling"
+    ],
+    "plan_changes": [
+      "subscription_plans.plan_changes.subscription_change_error"
+    ],
+    "mobile_data_plan_usage": [
+      "mobile_data.mobile_data_plan_usage.data_allowance_exhausted",
+      "mobile_data.mobile_data_plan_usage.unexpected_data_consumption"
+    ],
+    "support_poor": [
+      "customer_support.support_poor.poor_customer_service",
+      "customer_support.support_poor.rude_agent",
+      "customer_support.support_poor.unprofessional_handling"
+    ],
+    "mobile_call_connection_problems": [
+      "mobile_network.mobile_call_connection_problems.dropped_calls",
+      "mobile_network.mobile_call_connection_problems.network_unavailability"
+    ],
+    "billing_incorrect": [
+      "billing_payments.billing_incorrect.bill_calculation_error",
+      "billing_payments.billing_incorrect.incorrect_billing",
+      "billing_payments.billing_incorrect.overcharge"
+    ],
+    "plan_cancellation": [
+      "subscription_plans.plan_cancellation.early_termination_dispute",
+      "subscription_plans.plan_cancellation.plan_cancellation_problem"
+    ],
+    "sim_activation": [
+      "number_sim.sim_activation.new_sim_not_working",
+      "number_sim.sim_activation.sim_activation_failure"
+    ],
+    "device_failure": [
+      "device_equipment.device_failure.device_not_working"
+    ],
+    "tv_outage": [
+      "tv_media.tv_outage.no_channels",
+      "tv_media.tv_outage.tv_service_outage"
+    ],
+    "tech_appointment": [
+      "technical_support.tech_appointment.access_visit_problem",
+      "technical_support.tech_appointment.technician_no_show"
+    ],
+    "tv_quality": [
+      "tv_media.tv_quality.pixelation_freezing"
+    ],
+    "account_access": [
+      "number_sim.account_access.account_login_problem",
+      "number_sim.account_access.otp_verification_problem"
+    ],
+    "mobile_network_outage": [
+      "mobile_network.mobile_network_outage.prolonged_network_down",
+      "mobile_network.mobile_network_outage.service_outage"
+    ],
+    "tech_repeated_failures": [
+      "technical_support.tech_repeated_failures.fix_did_not_last",
+      "technical_support.tech_repeated_failures.recurring_fault"
+    ],
+    "billing_unexpected": [
+      "billing_payments.billing_unexpected.hidden_fees"
+    ],
+    "device_setup": [
+      "device_equipment.device_setup.compatibility_problem"
+    ],
+    "plan_pricing": [
+      "subscription_plans.plan_pricing.price_increase_dispute"
+    ],
+    "voice_call_quality": [
+      "voice_calling.voice_call_quality.audio_distortion_echo",
+      "voice_calling.voice_call_quality.poor_call_quality"
+    ],
+    "device_lost_stolen": [
+      "device_equipment.device_lost_stolen.device_lock_unlock_problem",
+      "device_equipment.device_lost_stolen.lost_device",
+      "device_equipment.device_lost_stolen.stolen_device"
+    ],
+    "tech_unresolved": [
+      "technical_support.tech_unresolved.no_fix_provided",
+      "technical_support.tech_unresolved.unresolved_technical_issue"
+    ],
+    "roaming_charges": [
+      "roaming_international.roaming_charges.roaming_charges_dispute"
+    ],
+    "plan_renewal": [
+      "subscription_plans.plan_renewal.unwanted_renewal"
+    ],
+    "billing_duplicate": [
+      "billing_payments.billing_duplicate.charged_twice",
+      "billing_payments.billing_duplicate.duplicate_charges"
+    ],
+    "plan_activation": [
+      "subscription_plans.plan_activation.activation_delay"
+    ],
+    "tv_streaming": [
+      "tv_media.tv_streaming.on_demand_failure"
+    ],
+    "number_lost": [
+      "number_sim.number_lost.lost_number"
+    ],
+    "device_network_lock": [
+      "device_equipment.device_network_lock.unlock_code_problem"
+    ],
+    "voice_call_failure": [
+      "voice_calling.voice_call_failure.call_connection_failure",
+      "voice_calling.voice_call_failure.call_failure",
+      "voice_calling.voice_call_failure.cannot_make_calls"
+    ],
+    "tv_channels": [
+      "tv_media.tv_channels.missing_channel"
+    ],
+    "device_warranty": [
+      "device_equipment.device_warranty.insurance_claim_problem",
+      "device_equipment.device_warranty.warranty_claim_problem"
+    ],
+    "tv_dvr": [
+      "tv_media.tv_dvr.dvr_failure"
+    ]
+  }
+}

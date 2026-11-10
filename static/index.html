@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TCIS | Telecom Customer Intelligence & Surveillance Platform</title>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Consolas', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+              950: '#0a0d17'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    .glassmorphism {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .badge-pulse {
+      animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-indigo-500 selection:text-white transition-colors duration-200">
+
+  <!-- Top Global Navigation Header -->
+  <header class="sticky top-0 z-50 bg-slate-950/85 border-b border-slate-800/80 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo & System Identity -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+          <i class="fa-solid fa-tower-broadcast text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">TCIS Analytics</span>
+            <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 badge-pulse"></span>
+              6 RoBERTa FP16 Models Active
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Telecom Customer Intelligence & Outage Surveillance Platform</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden lg:flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
+        <button onclick="switchTab('live')" id="tab-btn-live" class="tab-btn px-3.5 py-1.5 rounded-lg font-bold transition text-white bg-indigo-600 shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+          <span>Live Studio</span>
+        </button>
+        <button onclick="switchTab('clusters')" id="tab-btn-clusters" class="tab-btn px-3.5 py-1.5 rounded-lg font-semibold transition text-slate-300 hover:text-white flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-xs text-amber-400"></i>
+          <span>Surveillance & Clusters</span>
+        </button>
+        <button onclick="switchTab('benchmark')" id="tab-btn-benchmark" class="tab-btn px-3.5 py-1.5 rounded-lg font-semibold transition text-slate-300 hover:text-white flex items-center gap-2">
+          <i class="fa-solid fa-chart-column text-xs text-emerald-400"></i>
+          <span>Model Benchmark</span>
+        </button>
+        <button onclick="switchTab('batch')" id="tab-btn-batch" class="tab-btn px-3.5 py-1.5 rounded-lg font-semibold transition text-slate-300 hover:text-white flex items-center gap-2">
+          <i class="fa-solid fa-file-csv text-xs text-cyan-400"></i>
+          <span>Batch & REST API</span>
+        </button>
+      </nav>
+
+      <!-- Utility Links -->
+      <div class="flex items-center gap-2">
+        <a href="/presentation" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-purple-300 hover:from-purple-600/30 hover:to-pink-600/30 border border-purple-500/40 transition">
+          <i class="fa-solid fa-display"></i>
+          <span>Slide Deck</span>
+        </a>
+        <a href="/docs" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 border border-indigo-500/30 transition">
+          <i class="fa-solid fa-book-open"></i>
+          <span>API Docs</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Mobile Nav Bar -->
+    <div class="lg:hidden flex items-center justify-around border-t border-slate-800 bg-slate-900/95 py-2 px-2 text-xs">
+      <button onclick="switchTab('live')" class="mobile-tab-btn flex flex-col items-center gap-1 text-indigo-400" id="m-tab-live">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span>Live</span>
+      </button>
+      <button onclick="switchTab('clusters')" class="mobile-tab-btn flex flex-col items-center gap-1 text-slate-400" id="m-tab-clusters">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>Clusters</span>
+      </button>
+      <button onclick="switchTab('benchmark')" class="mobile-tab-btn flex flex-col items-center gap-1 text-slate-400" id="m-tab-benchmark">
+        <i class="fa-solid fa-chart-column"></i>
+        <span>Benchmark</span>
+      </button>
+      <button onclick="switchTab('batch')" class="mobile-tab-btn flex flex-col items-center gap-1 text-slate-400" id="m-tab-batch">
+        <i class="fa-solid fa-file-csv"></i>
+        <span>Batch</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- KPI Metric Ribbon -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="glassmorphism rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-700 transition">
+        <div class="p-3 rounded-xl bg-indigo-500/10 text-indigo-400 text-xl">
+          <i class="fa-solid fa-database"></i>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 font-medium block">Dataset Corpus</span>
+          <span class="text-lg font-extrabold text-white">36,417 Records</span>
+          <span class="text-[10px] text-slate-500 block">7.1k complaints • 5.5k chats</span>
+        </div>
+      </div>
+
+      <div class="glassmorphism rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-700 transition">
+        <div class="p-3 rounded-xl bg-purple-500/10 text-purple-400 text-xl">
+          <i class="fa-solid fa-network-wired"></i>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 font-medium block">BERTopic Clusters</span>
+          <span class="text-lg font-extrabold text-white">228 Clusters</span>
+          <span class="text-[10px] text-slate-500 block">20 major semantic topics</span>
+        </div>
+      </div>
+
+      <div class="glassmorphism rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-700 transition">
+        <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 text-xl">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 font-medium block">Hierarchy Integrity</span>
+          <span class="text-lg font-extrabold text-white">L1 ➔ L2 ➔ L3</span>
+          <span class="text-[10px] text-emerald-400 block">100% Constrained Consistency</span>
+        </div>
+      </div>
+
+      <div class="glassmorphism rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-700 transition">
+        <div class="p-3 rounded-xl bg-amber-500/10 text-amber-400 text-xl">
+          <i class="fa-solid fa-bell"></i>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 font-medium block">Collective Surveillance</span>
+          <span class="text-lg font-extrabold text-white">Poisson Scan</span>
+          <span class="text-[10px] text-amber-400 block">24h Window • q &lt; 0.01</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 1: LIVE INTELLIGENCE STUDIO -->
+    <!-- ======================================================== -->
+    <section id="panel-live" class="space-y-6">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Input Column (5 cols) -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="glassmorphism rounded-2xl p-5 shadow-xl space-y-4">
+            
+            <div class="flex items-center justify-between">
+              <h2 class="font-bold text-sm text-white flex items-center gap-2">
+                <i class="fa-solid fa-comment-dots text-indigo-400"></i>
+                <span>Interaction Input & Feedback</span>
+              </h2>
+              <span class="text-xs text-slate-400 font-mono" id="char-counter">0 chars</span>
+            </div>
+
+            <!-- Demo Scenario Selector -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1.5">
+                Pre-configured Benchmark Scenarios:
+              </label>
+              <div class="flex flex-wrap gap-1.5" id="samples-pills">
+                <!-- Injected dynamically -->
+              </div>
+            </div>
+
+            <!-- Input Textarea -->
+            <div class="relative">
+              <textarea 
+                id="input-text" 
+                rows="8" 
+                placeholder="Type or paste customer interaction here, or role-based conversation turns using [CUSTOMER] and [COMPANY]..."
+                class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none font-sans leading-relaxed"
+              ></textarea>
+              
+              <!-- Role Tag Helpers -->
+              <div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-slate-500 text-[10px]">Insert Role:</span>
+                  <button type="button" onclick="insertRoleTag('[CUSTOMER] ')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-mono text-[10px] transition">
+                    + [CUSTOMER]
+                  </button>
+                  <button type="button" onclick="insertRoleTag('[COMPANY] ')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-mono text-[10px] transition">
+                    + [COMPANY]
+                  </button>
+                </div>
+                <button type="button" onclick="clearInput()" class="text-slate-500 hover:text-slate-300 text-xs transition" title="Clear input">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Run Analysis Button -->
+            <button 
+              id="btn-analyze" 
+              onclick="runAnalysis()" 
+              class="w-full py-3 px-4 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 transform active:scale-[0.99]"
+            >
+              <i class="fa-solid fa-brain text-sm"></i>
+              <span>Execute End-to-End Inference</span>
+              <span id="analyze-spinner" class="hidden">
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+              </span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Output Column (7 cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          
+          <!-- Empty State -->
+          <div id="results-empty" class="glassmorphism rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[420px] space-y-3">
+            <div class="w-16 h-16 rounded-2xl bg-slate-900 flex items-center justify-center text-slate-500 text-2xl border border-slate-800">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <h3 class="font-bold text-slate-300 text-sm">Awaiting Customer Input</h3>
+            <p class="text-xs text-slate-400 max-w-sm">
+              Select one of the benchmark scenarios or input customer feedback to run multi-task inference, hierarchical decoding, and cluster attribution.
+            </p>
+          </div>
+
+          <!-- Active Results Container -->
+          <div id="results-container" class="hidden space-y-4">
+            
+            <!-- Priority & Operational SLA Card -->
+            <div id="banner-priority" class="rounded-2xl p-4 border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-3.5">
+                <div id="priority-icon-box" class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-lg">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span id="priority-level-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider"></span>
+                    <span class="text-xs text-slate-400">Urgency Score:</span>
+                    <span id="priority-score-num" class="font-black text-sm text-white font-mono"></span>
+                  </div>
+                  <p id="action-text" class="text-xs text-slate-200 mt-0.5 font-medium"></p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 self-stretch sm:self-auto">
+                <div class="bg-slate-950/70 px-3.5 py-2 rounded-xl border border-slate-800 text-left">
+                  <span class="text-[10px] text-slate-400 block">SLA Window:</span>
+                  <span id="sla-text" class="text-xs font-bold text-amber-300"></span>
+                </div>
+                <div class="bg-slate-950/70 px-3.5 py-2 rounded-xl border border-slate-800 text-right">
+                  <span class="text-[10px] text-slate-400 block">Inference:</span>
+                  <span id="live-latency" class="text-xs font-mono font-bold text-emerald-400">-- ms</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Triplet Cards with Radial / Progress Visualizations -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              
+              <!-- Complaint Detection Card -->
+              <div class="glassmorphism rounded-xl p-3.5 space-y-2.5">
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                  <span class="font-semibold">Complaint Status</span>
+                  <i class="fa-solid fa-flag text-indigo-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                  <span id="res-complaint-label" class="text-base font-extrabold text-white">--</span>
+                  <span id="res-complaint-conf" class="text-xs font-mono font-bold text-indigo-300">--%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div id="prog-complaint" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Sentiment Analysis Card -->
+              <div class="glassmorphism rounded-xl p-3.5 space-y-2.5">
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                  <span class="font-semibold">Customer Sentiment</span>
+                  <i class="fa-solid fa-face-smile text-emerald-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                  <span id="res-sentiment-label" class="text-base font-extrabold text-white">--</span>
+                  <span id="res-sentiment-conf" class="text-xs font-mono font-bold text-emerald-300">--%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div id="prog-sentiment" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Severity Assessment Card -->
+              <div class="glassmorphism rounded-xl p-3.5 space-y-2.5">
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                  <span class="font-semibold">Severity Assessment</span>
+                  <i class="fa-solid fa-gauge-high text-pink-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                  <span id="res-severity-label" class="text-base font-extrabold text-white">--</span>
+                  <span id="res-severity-conf" class="text-xs font-mono font-bold text-pink-300">--%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div id="prog-severity" class="h-full bg-gradient-to-r from-pink-500 to-rose-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Hierarchical Consistency Pathway Visualizer -->
+            <div class="glassmorphism rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                  <i class="fa-solid fa-diagram-project text-purple-400"></i>
+                  <span>Constrained Hierarchical Taxonomy Path (L1 ➔ L2 ➔ L3)</span>
+                </h4>
+                <span id="doc-hier-badge" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <i class="fa-solid fa-check-double mr-1"></i> Consistent
+                </span>
+              </div>
+
+              <!-- Visual 3-Stage Pipeline Cards -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                
+                <!-- Level 1 -->
+                <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-800 space-y-1.5">
+                  <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block">L1 • Services</span>
+                  <div id="hier-l1-tags" class="flex flex-wrap gap-1.5 mt-1">
+                    <!-- Injected -->
+                  </div>
+                </div>
+
+                <!-- Level 2 -->
+                <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-800 space-y-1">
+                  <span class="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">L2 • Issue Category</span>
+                  <p id="hier-l2-text" class="text-xs font-bold text-white mt-1">--</p>
+                  <p id="hier-l2-conf" class="text-[10px] text-slate-400 font-mono">Confidence: --%</p>
+                </div>
+
+                <!-- Level 3 -->
+                <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-800 space-y-1">
+                  <span class="text-[10px] font-bold text-pink-400 uppercase tracking-wider block">L3 • Specific Issue</span>
+                  <p id="hier-l3-text" class="text-xs font-bold text-white mt-1 truncate" title="">--</p>
+                  <p id="hier-l3-conf" class="text-[10px] text-slate-400 font-mono">Confidence: --%</p>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Cluster Attribution & Outage Anomaly Card -->
+            <div class="glassmorphism rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div class="space-y-1">
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider font-bold block">Assigned BERTopic Cluster & Semantic Topic:</span>
+                <p class="text-xs font-bold text-white flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono" id="doc-cluster-id">#--</span>
+                  <span id="doc-cluster-topic" class="text-slate-200">--</span>
+                </p>
+                <span class="text-[10px] text-slate-400 font-mono" id="doc-cluster-votes">Consensus Neighbors: --</span>
+              </div>
+              <div class="text-left">
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider font-bold block mb-1">Surveillance Status:</span>
+                <span id="doc-cluster-status" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">--</span>
+              </div>
+            </div>
+
+            <!-- Interactive Probability Charts Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+              <!-- Services Chart -->
+              <div class="glassmorphism rounded-xl p-3.5 space-y-2">
+                <h5 class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                  <span>L1 Multi-Label Services Probability</span>
+                  <span class="text-[10px] text-slate-400 font-mono">Top Candidates</span>
+                </h5>
+                <div class="h-44 relative">
+                  <canvas id="chart-services"></canvas>
+                </div>
+              </div>
+
+              <!-- Sentiment Distribution Chart -->
+              <div class="glassmorphism rounded-xl p-3.5 space-y-2">
+                <h5 class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                  <span>Sentiment & Severity Distribution</span>
+                  <span class="text-[10px] text-slate-400 font-mono">Model Logits</span>
+                </h5>
+                <div class="h-44 relative">
+                  <canvas id="chart-sent-sev"></canvas>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- FLAN-T5 Structured Summary Box -->
+            <div class="glassmorphism rounded-xl p-3.5 space-y-1.5 border-indigo-500/30">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold text-indigo-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-file-lines"></i>
+                  <span>FLAN-T5 Generative Incident Summary:</span>
+                </span>
+                <button onclick="copyIncidentSummary()" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono transition">
+                  <i class="fa-regular fa-copy"></i> Copy
+                </button>
+              </div>
+              <p id="doc-flan-summary" class="text-xs font-mono text-emerald-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800 leading-relaxed">
+                --
+              </p>
+            </div>
+
+            <!-- Collapsible Raw JSON Response -->
+            <details class="bg-slate-900 border border-slate-800 rounded-xl text-xs overflow-hidden">
+              <summary class="px-3.5 py-2 cursor-pointer font-medium text-slate-400 hover:text-slate-200 flex items-center justify-between select-none">
+                <span class="flex items-center gap-2">
+                  <i class="fa-solid fa-code text-indigo-400"></i>
+                  <span>Unified JSON Response Payload</span>
+                </span>
+                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+              </summary>
+              <div class="p-3 bg-slate-950 font-mono text-[11px] text-emerald-400 overflow-x-auto relative">
+                <pre id="raw-json-output">{}</pre>
+              </div>
+            </details>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 2: COLLECTIVE SURVEILLANCE & CLUSTERS -->
+    <!-- ======================================================== -->
+    <section id="panel-clusters" class="hidden space-y-6">
+      
+      <div class="glassmorphism rounded-2xl p-6 shadow-xl space-y-6">
+        
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase tracking-wider font-mono">
+              Surveillance Engine
+            </span>
+            <span class="text-xs text-slate-400 font-mono">Poisson 24h Scan • Benjamini-Hochberg FDR Control</span>
+          </div>
+          <h2 class="text-xl font-bold text-white mt-1">Collective Indicators, Outage Surveillance & Cluster Analytics</h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Real-time statistical anomaly monitoring designed to identify unexpected complaint concentrations within a sliding 24-hour window, controlling false discoveries across all 228 semantic clusters.
+          </p>
+        </div>
+
+        <!-- Anomaly Cards Grid -->
+        <div class="space-y-3">
+          <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-bell"></i> Active Anomaly Alerts (FDR Adjusted q &lt; 0.05):
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="collective-alerts-container">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Prominent Visual Cluster Visualizations (Charts Grid) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
+          
+          <!-- Chart 1: Top Topics Distribution (7 cols) -->
+          <div class="lg:col-span-7 bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-bold text-white">Cluster Volume & Topic Distribution</h4>
+                <p class="text-[10px] text-slate-400">Total member complaints per semantic topic</p>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 font-mono">20 Major Topics</span>
+            </div>
+            <div class="h-64 relative">
+              <canvas id="chart-topics-bar"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Category Breakdown Donut (5 cols) -->
+          <div class="lg:col-span-5 bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-bold text-white">Service Category Distribution</h4>
+                <p class="text-[10px] text-slate-400">Cluster mass across carrier service domains</p>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 font-mono">Mass Share</span>
+            </div>
+            <div class="h-64 relative">
+              <canvas id="chart-categories-donut"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Daily Volume Surge Spikes (Z-Score Chart & Table) -->
+        <div class="space-y-3 pt-4 border-t border-slate-800">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-chart-line"></i> Daily Service Volume Spikes (Z-Score Threshold &gt; 3.0):
+            </h3>
+            <span class="text-[10px] text-slate-400 font-mono">Z = (x - μ) / σ</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+            
+            <div class="lg:col-span-6 bg-slate-900/90 rounded-xl p-3.5 border border-slate-800">
+              <div class="h-48 relative">
+                <canvas id="chart-spikes-bar"></canvas>
+              </div>
+            </div>
+
+            <div class="lg:col-span-6 overflow-x-auto rounded-xl border border-slate-800">
+              <table class="w-full text-left text-xs text-slate-300 divide-y divide-slate-800">
+                <thead class="bg-slate-950 text-slate-400 font-bold">
+                  <tr>
+                    <th class="p-2.5">Date</th>
+                    <th class="p-2.5">Affected Service</th>
+                    <th class="p-2.5">Z-Score</th>
+                    <th class="p-2.5">Complaint Vol</th>
+                    <th class="p-2.5">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="spikes-table-body" class="divide-y divide-slate-800/60 bg-slate-900/40 font-mono text-[11px]">
+                  <!-- Injected -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Searchable Cluster & Topic Explorer Table -->
+        <div class="space-y-3 pt-4 border-t border-slate-800">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-xs font-bold text-purple-300 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-layer-group"></i> BERTopic Clusters & Representative N-Grams Explorer:
+              </h3>
+              <p class="text-[10px] text-slate-400">Homogeneity Score vs L2: 0.597 | NMI: 0.473 | Noise Ratio: 0.348</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input 
+                type="text" 
+                id="cluster-search-input" 
+                oninput="filterClustersTable()" 
+                placeholder="Search cluster or keyword..." 
+                class="px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-52"
+              >
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-slate-800 max-h-80">
+            <table class="w-full text-left text-xs text-slate-300 divide-y divide-slate-800">
+              <thead class="bg-slate-950 text-slate-400 font-bold sticky top-0">
+                <tr>
+                  <th class="p-2.5 font-mono">Cluster ID</th>
+                  <th class="p-2.5 font-mono">Members</th>
+                  <th class="p-2.5">Topic Designation</th>
+                  <th class="p-2.5">Representative Semantic N-Grams</th>
+                  <th class="p-2.5">Carrier Service Domain</th>
+                </tr>
+              </thead>
+              <tbody id="bertopic-table-body" class="divide-y divide-slate-800/60 bg-slate-900/40">
+                <!-- Injected -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 3: MODEL BENCHMARK MATRIX (Macro-F1) -->
+    <!-- ======================================================== -->
+    <section id="panel-benchmark" class="hidden space-y-6">
+      
+      <div class="glassmorphism rounded-2xl p-6 shadow-xl space-y-6">
+        
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider font-mono">
+              Evaluation Matrix
+            </span>
+            <span class="text-xs text-slate-400 font-mono">Held-out Test Split • Unweighted Macro-F1 Metric</span>
+          </div>
+          <h2 class="text-xl font-bold text-white mt-1">Official Model Benchmark Matrix: Deep Transformers vs. Baselines</h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Macro-F1 provides an unbiased evaluation metric across highly imbalanced telecom classes, measuring per-class performance independently before averaging.
+          </p>
+        </div>
+
+        <!-- Visual Benchmark Comparison Chart -->
+        <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-white">Cross-Task Macro-F1 Comparison: RoBERTa vs LinearSVC vs Logistic Regression</h4>
+            <span class="text-[10px] text-slate-400 font-mono">Test Set</span>
+          </div>
+          <div class="h-64 relative">
+            <canvas id="chart-benchmark-bar"></canvas>
+          </div>
+        </div>
+
+        <!-- Official Matrix Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left text-xs text-slate-300 divide-y divide-slate-800 font-mono">
+            <thead class="bg-slate-950 text-slate-400 font-bold">
+              <tr>
+                <th class="p-3">Classification Task</th>
+                <th class="p-3">RoBERTa Base</th>
+                <th class="p-3">LinearSVC</th>
+                <th class="p-3">Logistic Regression</th>
+                <th class="p-3">MultinomialNB</th>
+                <th class="p-3">BERT Base</th>
+                <th class="p-3">DeBERTa-v3</th>
+                <th class="p-3 text-emerald-400">Winning Model</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-table-body" class="divide-y divide-slate-800/60 bg-slate-900/40 text-[11px]">
+              <!-- Injected -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Benchmark Takeaway Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          
+          <div class="glassmorphism rounded-xl p-4 space-y-1.5 border-indigo-500/30">
+            <span class="font-bold text-indigo-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-trophy"></i> RoBERTa Leads Sentiment & Services
+            </span>
+            <p class="text-slate-300 text-[11px] leading-relaxed">
+              RoBERTa achieved state-of-the-art Macro-F1 on message-level sentiment (<b>0.931</b>), multi-label services (<b>0.776</b>), and severity (<b>0.765</b>), showcasing deep contextual grasp of colloquial customer expressions.
+            </p>
+          </div>
+
+          <div class="glassmorphism rounded-xl p-4 space-y-1.5 border-emerald-500/30">
+            <span class="font-bold text-emerald-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-bolt"></i> LinearSVC Leads Sparse L3 Issues
+            </span>
+            <p class="text-slate-300 text-[11px] leading-relaxed">
+              LinearSVC outperformed deep neural networks on message-level specific issues L3 (<b>0.775</b> vs <b>0.415</b>), demonstrating that regularized linear classifiers remain potent on sparse fine-grained classes.
+            </p>
+          </div>
+
+          <div class="glassmorphism rounded-xl p-4 space-y-1.5 border-amber-500/30">
+            <span class="font-bold text-amber-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-triangle-exclamation"></i> BERT Leads Complaint Detection
+            </span>
+            <p class="text-slate-300 text-[11px] leading-relaxed">
+              BERT Base achieved peak performance on message-level complaint detection with <b>0.903</b> Macro-F1. DeBERTa-v3 suffered from AMP gradient unscaling during initial training (<b>0.095</b>).
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 4: BATCH CSV & REST API -->
+    <!-- ======================================================== -->
+    <section id="panel-batch" class="hidden space-y-6">
+      
+      <div class="glassmorphism rounded-2xl p-6 shadow-xl space-y-6">
+        
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-file-csv text-cyan-400"></i>
+            <span>Batch CSV Dataset Processing & REST API Integration</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Upload large operational datasets containing customer complaints to run bulk multi-task inference, generate aggregated summary charts, and export enriched reports.
+          </p>
+        </div>
+
+        <!-- Upload Drag & Drop Zone -->
+        <div class="border-2 border-dashed border-slate-800 hover:border-indigo-500 rounded-2xl p-8 text-center bg-slate-950/50 cursor-pointer transition relative" onclick="document.getElementById('csv-file-input').click()">
+          <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="handleFileSelect(this.files)">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 mx-auto flex items-center justify-center text-xl mb-3">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+          <p class="text-xs font-semibold text-slate-200" id="file-chosen-name">Drag and drop CSV file here or click to browse</p>
+          <p class="text-[10px] text-slate-500 mt-1">Supported file formats: UTF-8 Encoded .csv (e.g. complaints.csv, conversations.csv)</p>
+        </div>
+
+        <!-- Batch Execution Controls -->
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4 text-xs">
+            <div class="flex items-center gap-2">
+              <label class="text-slate-400">Text Column Name:</label>
+              <input type="text" id="text-col-name" value="text" class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 w-28 font-mono">
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-slate-400">Sample Limit:</label>
+              <select id="batch-limit-select" class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-200">
+                <option value="25">25 Records</option>
+                <option value="50" selected>50 Records</option>
+                <option value="100">100 Records</option>
+                <option value="200">200 Records</option>
+              </select>
+            </div>
+          </div>
+
+          <button 
+            id="btn-run-batch" 
+            onclick="uploadAndAnalyzeCsv()" 
+            class="px-5 py-2 rounded-xl font-bold text-xs text-white bg-indigo-600 hover:bg-indigo-500 transition flex items-center gap-2 shadow-md shadow-indigo-600/20"
+          >
+            <i class="fa-solid fa-play"></i>
+            <span>Execute Batch Inference</span>
+            <span id="batch-spinner" class="hidden">
+              <i class="fa-solid fa-circle-notch fa-spin"></i>
+            </span>
+          </button>
+        </div>
+
+        <!-- Batch Results Display Wrapper -->
+        <div id="batch-results-wrapper" class="hidden space-y-6 pt-4 border-t border-slate-800">
+          
+          <!-- Summary Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-800">
+              <span class="text-[10px] text-slate-400 uppercase font-bold block">Total Rows In File</span>
+              <p class="text-lg font-black text-white mt-0.5" id="b-total-file">-</p>
+            </div>
+            <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-800">
+              <span class="text-[10px] text-slate-400 uppercase font-bold block">Processed Records</span>
+              <p class="text-lg font-black text-indigo-400 mt-0.5" id="b-analyzed-count">-</p>
+            </div>
+            <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-800">
+              <span class="text-[10px] text-slate-400 uppercase font-bold block">Execution Latency</span>
+              <p class="text-lg font-black text-emerald-400 mt-0.5 font-mono" id="b-elapsed-time">-</p>
+            </div>
+            <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-slate-400 uppercase font-bold block">Export Results</span>
+                <p class="text-xs text-slate-300 font-semibold">Enriched CSV</p>
+              </div>
+              <button onclick="exportBatchCsv()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow">
+                <i class="fa-solid fa-download"></i> Export
+              </button>
+            </div>
+          </div>
+
+          <!-- Batch Visual Summary Charts -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-800 space-y-2">
+              <h5 class="text-xs font-semibold text-slate-300">Complaint Ratio</h5>
+              <div class="h-44 relative">
+                <canvas id="b-chart-complaints"></canvas>
+              </div>
+            </div>
+            <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-800 space-y-2">
+              <h5 class="text-xs font-semibold text-slate-300">Sentiment Distribution</h5>
+              <div class="h-44 relative">
+                <canvas id="b-chart-sentiments"></canvas>
+              </div>
+            </div>
+            <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-800 space-y-2">
+              <h5 class="text-xs font-semibold text-slate-300">Top Reported Services</h5>
+              <div class="h-44 relative">
+                <canvas id="b-chart-services"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Batch Records Table -->
+          <div class="space-y-2">
+            <h5 class="text-xs font-bold text-slate-300">Classified Dataset Records Preview:</h5>
+            <div class="overflow-x-auto rounded-xl border border-slate-800 max-h-80">
+              <table class="w-full text-left text-xs text-slate-300 divide-y divide-slate-800">
+                <thead class="bg-slate-950 text-slate-400 font-bold sticky top-0">
+                  <tr>
+                    <th class="p-2.5 font-mono">#</th>
+                    <th class="p-2.5">Customer Message</th>
+                    <th class="p-2.5">Complaint</th>
+                    <th class="p-2.5">Sentiment</th>
+                    <th class="p-2.5">Service L1</th>
+                    <th class="p-2.5">Issue L2</th>
+                    <th class="p-2.5 font-mono">Cluster</th>
+                    <th class="p-2.5 font-mono">Urgency</th>
+                  </tr>
+                </thead>
+                <tbody id="batch-table-body" class="divide-y divide-slate-800/60 bg-slate-900/40">
+                  <!-- Injected -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
+    <p>Telecom Customer Intelligence System (TCIS) • Enterprise AI Platform Powered by RoBERTa FP16 &amp; FastAPI</p>
+  </footer>
+
+  <!-- Application Logic JavaScript -->
+  <script>
+    let demoSamples = [];
+    let allTopics = [];
+    let chartServicesInst = null;
+    let chartSentSevInst = null;
+    let chartTopicsBarInst = null;
+    let chartCatDonutInst = null;
+    let chartSpikesBarInst = null;
+    let chartBenchmarkBarInst = null;
+    let bChartComplaintsInst = null;
+    let bChartSentimentsInst = null;
+    let bChartServicesInst = null;
+    let lastAnalysisResult = null;
+    let lastBatchRecords = [];
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      setupCharacterCounter();
+      await fetchDemoSamples();
+      await loadCollectiveSurveillance();
+      await loadBenchmarkMatrix();
+    });
+
+    function switchTab(tabId) {
+      ['live', 'clusters', 'benchmark', 'batch'].forEach(t => {
+        const panel = document.getElementById(`panel-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const mBtn = document.getElementById(`m-tab-${t}`);
+        if (t === tabId) {
+          if (panel) panel.classList.remove('hidden');
+          if (btn) btn.className = "tab-btn px-3.5 py-1.5 rounded-lg font-bold transition text-white bg-indigo-600 shadow-sm flex items-center gap-2";
+          if (mBtn) mBtn.className = "mobile-tab-btn flex flex-col items-center gap-1 text-indigo-400";
+        } else {
+          if (panel) panel.classList.add('hidden');
+          if (btn) btn.className = "tab-btn px-3.5 py-1.5 rounded-lg font-semibold transition text-slate-300 hover:text-white flex items-center gap-2";
+          if (mBtn) mBtn.className = "mobile-tab-btn flex flex-col items-center gap-1 text-slate-400";
+        }
+      });
+    }
+
+    function setupCharacterCounter() {
+      const textarea = document.getElementById('input-text');
+      textarea.addEventListener('input', () => {
+        document.getElementById('char-counter').innerText = `${textarea.value.length} chars`;
+      });
+    }
+
+    function insertRoleTag(tag) {
+      const textarea = document.getElementById('input-text');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const prefix = (start > 0 && text[start - 1] !== '\n') ? '\n' : '';
+      textarea.value = text.substring(0, start) + prefix + tag + text.substring(end);
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = start + prefix.length + tag.length;
+      document.getElementById('char-counter').innerText = `${textarea.value.length} chars`;
+    }
+
+    function clearInput() {
+      document.getElementById('input-text').value = '';
+      document.getElementById('char-counter').innerText = '0 chars';
+    }
+
+    async function fetchDemoSamples() {
+      try {
+        const res = await fetch('/api/demo-samples');
+        const data = await res.json();
+        demoSamples = data.samples || [];
+        renderSamplePills();
+      } catch (err) {
+        console.error("Failed to load demo samples", err);
+      }
+    }
+
+    function renderSamplePills() {
+      const container = document.getElementById('samples-pills');
+      if (!container) return;
+      container.innerHTML = '';
+      demoSamples.forEach((sample, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `px-2.5 py-1 rounded-lg text-xs font-semibold border transition flex items-center gap-1.5 ${
+          idx === 0 
+            ? 'bg-indigo-950/80 border-indigo-500/50 text-indigo-300 hover:bg-indigo-900' 
+            : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
+        }`;
+        btn.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${idx === 0 ? 'bg-pink-400' : (idx === 1 ? 'bg-amber-400' : 'bg-emerald-400')}"></span> ${sample.title}`;
+        btn.onclick = () => {
+          document.getElementById('input-text').value = sample.text;
+          document.getElementById('char-counter').innerText = `${sample.text.length} chars`;
+          runAnalysis();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    async function runAnalysis() {
+      const text = document.getElementById('input-text').value.trim();
+      if (!text) {
+        alert('Please enter customer feedback or select a scenario.');
+        return;
+      }
+
+      const btn = document.getElementById('btn-analyze');
+      const spinner = document.getElementById('analyze-spinner');
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+
+      try {
+        const res = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        const data = await res.json();
+        lastAnalysisResult = data;
+        displayLiveResults(data);
+      } catch (e) {
+        alert(e.message);
+      } finally {
+        btn.disabled = false;
+        spinner.classList.add('hidden');
+      }
+    }
+
+    function displayLiveResults(data) {
+      document.getElementById('results-empty').classList.add('hidden');
+      document.getElementById('results-container').classList.remove('hidden');
+
+      // Latency badge
+      const latEl = document.getElementById('live-latency');
+      if (latEl && data.latency_ms) {
+        latEl.innerText = `${data.latency_ms} ms (FP16 Warm)`;
+      }
+
+      // 1. Complaint Status
+      const compLabel = Object.keys(data.complaint)[0];
+      const compConf = Math.round(data.complaint[compLabel] * 100);
+      document.getElementById('res-complaint-label').innerText = compLabel;
+      document.getElementById('res-complaint-conf').innerText = `${compConf}%`;
+      document.getElementById('prog-complaint').style.width = `${compConf}%`;
+
+      // 2. Sentiment Status
+      const sentLabel = Object.keys(data.sentiment)[0];
+      const sentConf = Math.round(data.sentiment[sentLabel] * 100);
+      document.getElementById('res-sentiment-label').innerText = sentLabel;
+      document.getElementById('res-sentiment-conf').innerText = `${sentConf}%`;
+      document.getElementById('prog-sentiment').style.width = `${sentConf}%`;
+
+      // 3. Severity Status
+      const sevLabel = Object.keys(data.severity)[0];
+      const sevConf = Math.round(data.severity[sevLabel] * 100);
+      document.getElementById('res-severity-label').innerText = sevLabel;
+      document.getElementById('res-severity-conf').innerText = `${sevConf}%`;
+      document.getElementById('prog-severity').style.width = `${sevConf}%`;
+
+      // 4. Hierarchy Path
+      const l1Box = document.getElementById('hier-l1-tags');
+      l1Box.innerHTML = '';
+      (data.services_L1 || []).forEach(s => {
+        const span = document.createElement('span');
+        span.className = "px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold text-xs border border-indigo-500/30";
+        span.innerText = s;
+        l1Box.appendChild(span);
+      });
+
+      document.getElementById('hier-l2-text').innerText = data.L2;
+      const l2Conf = Math.round((data.detailed_scores?.l2?.conf || 0.85) * 100);
+      document.getElementById('hier-l2-conf').innerText = `Confidence: ${l2Conf}%`;
+
+      document.getElementById('hier-l3-text').innerText = data.L3;
+      document.getElementById('hier-l3-text').title = data.L3;
+      const l3Conf = Math.round((data.detailed_scores?.l3?.conf || 0.80) * 100);
+      document.getElementById('hier-l3-conf').innerText = `Confidence: ${l3Conf}%`;
+
+      // 5. Cluster & Surveillance Status
+      const cl = data.nearest_cluster;
+      document.getElementById('doc-cluster-id').innerText = `#${cl.id}`;
+      document.getElementById('doc-cluster-topic').innerText = cl.topic;
+      document.getElementById('doc-cluster-votes').innerText = `Consensus Neighbors: ${cl.votes} of 5`;
+      
+      const stEl = document.getElementById('doc-cluster-status');
+      stEl.innerText = cl.incident_status;
+      if (cl.incident_status === 'Potential Anomaly') {
+        stEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40';
+      } else if (cl.incident_status === 'Watchlist Candidate') {
+        stEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+      } else {
+        stEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700';
+      }
+
+      // 6. FLAN-T5 Summary
+      document.getElementById('doc-flan-summary').innerText = data.incident_summary;
+
+      // 7. Priority & SLA
+      const p = data.intelligence;
+      document.getElementById('priority-score-num').innerText = `${p.priority_score} / 100`;
+      document.getElementById('sla-text').innerText = p.sla_window;
+      document.getElementById('action-text').innerText = p.recommended_action;
+
+      const banner = document.getElementById('banner-priority');
+      const pBadge = document.getElementById('priority-level-badge');
+      const pIcon = document.getElementById('priority-icon-box');
+
+      if (p.priority_score >= 75) {
+        banner.className = "rounded-2xl p-4 border border-rose-500/40 bg-rose-950/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
+        pIcon.className = "w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-lg bg-rose-500/20 text-rose-400";
+        pBadge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-rose-500/20 text-rose-300";
+        pBadge.innerText = 'Critical Priority';
+      } else if (p.priority_score >= 45) {
+        banner.className = "rounded-2xl p-4 border border-amber-500/40 bg-amber-950/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
+        pIcon.className = "w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-lg bg-amber-500/20 text-amber-400";
+        pBadge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-500/20 text-amber-300";
+        pBadge.innerText = 'Medium Priority';
+      } else {
+        banner.className = "rounded-2xl p-4 border border-emerald-500/40 bg-emerald-950/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
+        pIcon.className = "w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-lg bg-emerald-500/20 text-emerald-400";
+        pBadge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-300";
+        pBadge.innerText = 'Low / Normal';
+      }
+
+      // Render Charts
+      renderLiveVisuals(data);
+
+      // JSON Raw output
+      document.getElementById('raw-json-output').innerText = JSON.stringify(data, null, 2);
+    }
+
+    function renderLiveVisuals(data) {
+      // 1. Services Probability Bar Chart
+      const svcData = data.detailed_scores?.services || {};
+      const sortedSvc = Object.entries(svcData).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const labelsSvc = sortedSvc.map(x => x[0].replace('_', ' '));
+      const valuesSvc = sortedSvc.map(x => Math.round(x[1] * 100));
+
+      const ctxSvc = document.getElementById('chart-services').getContext('2d');
+      if (chartServicesInst) chartServicesInst.destroy();
+      chartServicesInst = new Chart(ctxSvc, {
+        type: 'bar',
+        data: {
+          labels: labelsSvc,
+          datasets: [{
+            data: valuesSvc,
+            backgroundColor: 'rgba(99, 102, 241, 0.75)',
+            borderColor: '#6366f1',
+            borderWidth: 1,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+            y: { grid: { display: false }, ticks: { color: '#cbd5e1', font: { size: 11 } } }
+          }
+        }
+      });
+
+      // 2. Sentiment & Severity Doughnut
+      const sentScores = data.detailed_scores?.sentiment?.scores || {};
+      const ctxSent = document.getElementById('chart-sent-sev').getContext('2d');
+      if (chartSentSevInst) chartSentSevInst.destroy();
+      chartSentSevInst = new Chart(ctxSent, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(sentScores),
+          datasets: [{
+            data: Object.values(sentScores).map(v => Math.round(v * 100)),
+            backgroundColor: [
+              'rgba(244, 63, 94, 0.85)',   // Negative
+              'rgba(148, 163, 184, 0.85)', // Neutral
+              'rgba(16, 185, 129, 0.85)',  // Positive
+              'rgba(245, 158, 11, 0.85)'   // Mixed
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'right', labels: { color: '#cbd5e1', font: { size: 11 } } }
+          }
+        }
+      });
+    }
+
+    function copyIncidentSummary() {
+      const text = document.getElementById('doc-flan-summary').innerText;
+      navigator.clipboard.writeText(text);
+      alert('Incident summary copied to clipboard.');
+    }
+
+    // Load Collective Surveillance & Clusters Tab
+    async function loadCollectiveSurveillance() {
+      try {
+        const [resAlerts, resTopics] = await Promise.all([
+          fetch('/api/collective-alerts'),
+          fetch('/api/topics')
+        ]);
+        const dAlerts = await resAlerts.json();
+        const dTopics = await resTopics.json();
+
+        allTopics = dTopics.topics || [];
+
+        // 1. Render Alert Cards
+        const alertsContainer = document.getElementById('collective-alerts-container');
+        if (alertsContainer) {
+          alertsContainer.innerHTML = '';
+          (dAlerts.active_collective_alerts || []).forEach(a => {
+            const card = document.createElement('div');
+            card.className = "bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2.5 hover:border-slate-700 transition";
+            card.innerHTML = `
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white flex items-center gap-2">
+                  <i class="fa-solid fa-circle-exclamation text-amber-400"></i>
+                  <span>Cluster #${a.cluster_id}: ${a.topic}</span>
+                </span>
+                <span class="px-2.5 py-0.5 rounded text-[10px] font-bold ${a.alert_level === 'Potential Anomaly' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}">${a.alert_level}</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-400 pt-1 font-mono">
+                <div>Surveillance Window: <span class="text-white font-bold">${a.count_24h} complaints / 24h</span></div>
+                <div>Cluster Total Size: <span class="text-white">${a.total_members} records</span></div>
+                <div>Poisson p-scan: <span class="text-emerald-400">${a.p_scan}</span></div>
+                <div>FDR Adjusted q-val: <span class="text-emerald-400 font-bold">${a.q_value}</span></div>
+              </div>
+              <p class="text-[11px] text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800 leading-relaxed">${a.explanation_en}</p>
+            `;
+            alertsContainer.appendChild(card);
+          });
+        }
+
+        // 2. Render Topics Bar Chart
+        const top10Topics = allTopics.slice(0, 10);
+        const ctxTopics = document.getElementById('chart-topics-bar').getContext('2d');
+        if (chartTopicsBarInst) chartTopicsBarInst.destroy();
+        chartTopicsBarInst = new Chart(ctxTopics, {
+          type: 'bar',
+          data: {
+            labels: top10Topics.map(t => `#${t.topic} ${t.name.split('_').slice(1, 3).join(' ')}`),
+            datasets: [{
+              label: 'Cluster Member Complaints',
+              data: top10Topics.map(t => t.count),
+              backgroundColor: 'rgba(99, 102, 241, 0.75)',
+              borderColor: '#6366f1',
+              borderWidth: 1,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+              y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#cbd5e1' } }
+            }
+          }
+        });
+
+        // 3. Render Category Donut
+        const catDist = dTopics.category_distribution || {};
+        const ctxCat = document.getElementById('chart-categories-donut').getContext('2d');
+        if (chartCatDonutInst) chartCatDonutInst.destroy();
+        chartCatDonutInst = new Chart(ctxCat, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(catDist).map(c => c.replace('_', ' ')),
+            datasets: [{
+              data: Object.values(catDist),
+              backgroundColor: [
+                '#6366f1', '#ec4899', '#10b981', '#f59e0b', '#06b6d4', '#8b5cf6', '#3b82f6'
+              ],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'right', labels: { color: '#cbd5e1', font: { size: 10 } } }
+            }
+          }
+        });
+
+        // 4. Render Spikes Table & Chart
+        const spikes = dAlerts.daily_service_spikes || [];
+        const spikesTbody = document.getElementById('spikes-table-body');
+        if (spikesTbody) {
+          spikesTbody.innerHTML = '';
+          spikes.forEach(s => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td class="p-2.5 font-mono text-slate-300">${s.day}</td>
+              <td class="p-2.5 font-bold text-indigo-300">${s.service}</td>
+              <td class="p-2.5 font-mono text-amber-400 font-bold">${s.z_score}</td>
+              <td class="p-2.5 font-mono">${s.count}</td>
+              <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${s.status === 'Critical Surge' ? 'bg-rose-500/20 text-rose-300' : 'bg-amber-500/20 text-amber-300'}">${s.status}</span></td>
+            `;
+            spikesTbody.appendChild(tr);
+          });
+        }
+
+        // Spikes Bar Chart
+        const ctxSpikes = document.getElementById('chart-spikes-bar').getContext('2d');
+        if (chartSpikesBarInst) chartSpikesBarInst.destroy();
+        chartSpikesBarInst = new Chart(ctxSpikes, {
+          type: 'bar',
+          data: {
+            labels: spikes.map(s => `${s.service.split('_')[0]} (${s.day.slice(5)})`),
+            datasets: [{
+              label: 'Z-Score Anomaly Magnitude',
+              data: spikes.map(s => s.z_score),
+              backgroundColor: 'rgba(245, 158, 11, 0.75)',
+              borderColor: '#f59e0b',
+              borderWidth: 1,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+              y: { min: 2.0, max: 5.0, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#cbd5e1' } }
+            }
+          }
+        });
+
+        // 5. Render Topics Table
+        renderClustersTable(allTopics);
+
+      } catch (e) {
+        console.error("Failed to load collective surveillance", e);
+      }
+    }
+
+    function renderClustersTable(topics) {
+      const tbody = document.getElementById('bertopic-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      topics.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition";
+        tr.innerHTML = `
+          <td class="p-2.5 font-mono font-bold text-indigo-400">#${t.topic}</td>
+          <td class="p-2.5 font-mono text-white font-bold">${t.count}</td>
+          <td class="p-2.5 font-bold text-slate-200">${t.name}</td>
+          <td class="p-2.5 text-slate-400 text-[11px] font-mono">${(t.representative_words || []).join(', ')}</td>
+          <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-300">${t.category}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterClustersTable() {
+      const query = document.getElementById('cluster-search-input').value.toLowerCase().trim();
+      if (!query) {
+        renderClustersTable(allTopics);
+      } else {
+        const filtered = allTopics.filter(t => 
+          String(t.topic).includes(query) ||
+          t.name.toLowerCase().includes(query) ||
+          t.category.toLowerCase().includes(query) ||
+          (t.representative_words || []).some(w => w.toLowerCase().includes(query))
+        );
+        renderClustersTable(filtered);
+      }
+    }
+
+    // Load Model Benchmark Matrix Tab
+    async function loadBenchmarkMatrix() {
+      try {
+        const res = await fetch('/api/model-comparison');
+        const data = await res.json();
+        const matrix = data.matrix || [];
+
+        const tbody = document.getElementById('matrix-table-body');
+        if (tbody) {
+          tbody.innerHTML = '';
+          matrix.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-800/40 transition";
+            tr.innerHTML = `
+              <td class="p-3 font-bold text-white">${row.task}</td>
+              <td class="p-3 ${row.best_model === 'RoBERTa' ? 'text-emerald-400 font-bold bg-emerald-950/30' : ''}">${row.RoBERTa ?? '—'}</td>
+              <td class="p-3 ${row.best_model === 'LinearSVC' ? 'text-emerald-400 font-bold bg-emerald-950/30' : ''}">${row.LinearSVC ?? '—'}</td>
+              <td class="p-3 ${row.best_model === 'LogisticRegression' ? 'text-emerald-400 font-bold bg-emerald-950/30' : ''}">${row.LogisticRegression ?? '—'}</td>
+              <td class="p-3 ${row.best_model === 'MultinomialNB' ? 'text-emerald-400 font-bold bg-emerald-950/30' : ''}">${row.MultinomialNB ?? '—'}</td>
+              <td class="p-3 ${row.best_model === 'BERT' ? 'text-emerald-400 font-bold bg-emerald-950/30' : ''}">${row.BERT ?? '—'}</td>
+              <td class="p-3 ${row.best_model === 'DeBERTa' ? 'text-emerald-400 font-bold bg-emerald-950/30' : ''}">${row.DeBERTa ?? '—'}</td>
+              <td class="p-3 text-emerald-300 font-bold">${row.best_model}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+
+        // Render Benchmark Chart
+        const tasksToChart = matrix.filter(r => r.RoBERTa !== null && r.LinearSVC !== null).slice(0, 8);
+        const ctxBench = document.getElementById('chart-benchmark-bar').getContext('2d');
+        if (chartBenchmarkBarInst) chartBenchmarkBarInst.destroy();
+        chartBenchmarkBarInst = new Chart(ctxBench, {
+          type: 'bar',
+          data: {
+            labels: tasksToChart.map(r => r.task),
+            datasets: [
+              {
+                label: 'RoBERTa Base (FP16)',
+                data: tasksToChart.map(r => r.RoBERTa),
+                backgroundColor: 'rgba(99, 102, 241, 0.85)',
+                borderRadius: 4
+              },
+              {
+                label: 'LinearSVC (TF-IDF)',
+                data: tasksToChart.map(r => r.LinearSVC),
+                backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                borderRadius: 4
+              },
+              {
+                label: 'Logistic Regression',
+                data: tasksToChart.map(r => r.LogisticRegression),
+                backgroundColor: 'rgba(245, 158, 11, 0.85)',
+                borderRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { color: '#cbd5e1', font: { size: 11 } } }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+              y: { max: 1.0, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#cbd5e1' } }
+            }
+          }
+        });
+
+      } catch (e) {
+        console.error("Failed to load benchmark matrix", e);
+      }
+    }
+
+    // Batch File Processing
+    let selectedFile = null;
+
+    function handleFileSelect(files) {
+      if (files && files[0]) {
+        selectedFile = files[0];
+        document.getElementById('file-chosen-name').innerText = `Selected: ${selectedFile.name} (${Math.round(selectedFile.size / 1024)} KB)`;
+      }
+    }
+
+    async function uploadAndAnalyzeCsv() {
+      if (!selectedFile) {
+        alert('Please select a valid CSV file.');
+        return;
+      }
+
+      const textCol = document.getElementById('text-col-name').value.trim() || 'text';
+      const limit = document.getElementById('batch-limit-select').value;
+      const btn = document.getElementById('btn-run-batch');
+      const spinner = document.getElementById('batch-spinner');
+
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('text_column', textCol);
+      formData.append('limit', limit);
+
+      try {
+        const response = await fetch('/api/batch-csv', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.detail || 'Batch analysis failed');
+        }
+
+        const data = await response.json();
+        lastBatchRecords = data.records || [];
+        displayBatchResults(data);
+      } catch (e) {
+        alert(e.message);
+      } finally {
+        btn.disabled = false;
+        spinner.classList.add('hidden');
+      }
+    }
+
+    function displayBatchResults(data) {
+      document.getElementById('batch-results-wrapper').classList.remove('hidden');
+
+      document.getElementById('b-total-file').innerText = `${data.total_rows_file} rows`;
+      document.getElementById('b-analyzed-count').innerText = `${data.analyzed_rows} records`;
+      document.getElementById('b-elapsed-time').innerText = `${data.elapsed_seconds} s`;
+
+      const sum = data.summary;
+
+      // 1. Complaints Pie Chart
+      const ctxC = document.getElementById('b-chart-complaints').getContext('2d');
+      if (bChartComplaintsInst) bChartComplaintsInst.destroy();
+      bChartComplaintsInst = new Chart(ctxC, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(sum.complaints),
+          datasets: [{
+            data: Object.values(sum.complaints),
+            backgroundColor: ['#ef4444', '#10b981', '#f59e0b']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 10 } } } }
+        }
+      });
+
+      // 2. Sentiments Bar Chart
+      const ctxS = document.getElementById('b-chart-sentiments').getContext('2d');
+      if (bChartSentimentsInst) bChartSentimentsInst.destroy();
+      bChartSentimentsInst = new Chart(ctxS, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(sum.sentiments),
+          datasets: [{
+            data: Object.values(sum.sentiments),
+            backgroundColor: '#8b5cf6',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#cbd5e1', font: { size: 10 } } },
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#cbd5e1' } }
+          }
+        }
+      });
+
+      // 3. Top Services Bar Chart
+      const ctxSvc = document.getElementById('b-chart-services').getContext('2d');
+      if (bChartServicesInst) bChartServicesInst.destroy();
+      bChartServicesInst = new Chart(ctxSvc, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(sum.top_services).map(k => k.replace('_', ' ')),
+          datasets: [{
+            data: Object.values(sum.top_services),
+            backgroundColor: '#06b6d4',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#cbd5e1' } },
+            y: { grid: { display: false }, ticks: { color: '#cbd5e1', font: { size: 10 } } }
+          }
+        }
+      });
+
+      // Table preview
+      const tbody = document.getElementById('batch-table-body');
+      tbody.innerHTML = '';
+      (data.records || []).forEach((row, i) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/60 transition';
+        tr.innerHTML = `
+          <td class="p-2.5 text-slate-500 font-mono">${i + 1}</td>
+          <td class="p-2.5 max-w-xs truncate" title="${row.original_text}">${row.original_text}</td>
+          <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${row.complaint_label === 'Complaint' ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'}">${row.complaint_label}</span></td>
+          <td class="p-2.5 font-semibold text-slate-300">${row.sentiment_label}</td>
+          <td class="p-2.5 text-indigo-300 font-semibold">${row.service_l1}</td>
+          <td class="p-2.5 text-slate-300">${row.category_l2}</td>
+          <td class="p-2.5 font-mono text-purple-300">#${row.nearest_cluster_id}</td>
+          <td class="p-2.5 font-mono font-bold ${row.priority_score >= 70 ? 'text-rose-400' : 'text-slate-300'}">${row.priority_score}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportBatchCsv() {
+      if (!lastBatchRecords || !lastBatchRecords.length) {
+        alert('No batch records available to export.');
+        return;
+      }
+
+      const headers = Object.keys(lastBatchRecords[0]);
+      let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
+      lastBatchRecords.forEach(row => {
+        const rowVals = headers.map(h => `"${String(row[h] || '').replace(/"/g, '""')}"`);
+        csvContent += rowVals.join(",") + "\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `tcis_batch_analysis_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+id,channel,text
+MOB_201,twitter,"I performed a SIM swap at your store yesterday, but now I have zero signal and unregistered SIM error. Cannot receive bank OTP codes!"
+MOB_202,mobile_app,No 5G or 4G LTE service anywhere in North Airport area. Total signal dead zone since 9 AM.
+MOB_203,web_chat,"Landed in Paris with active international roaming pass, but device cannot register on any partner cellular network."
+MOB_204,call_center,Every outgoing voice call drops within 15 seconds. Call failure rate is 100% in our office building.
+MOB_205,twitter,"[CUSTOMER] Did you guys have a cellular tower collapse? Zero bars for all phones in our street.
+[COMPANY] Hello, our engineers are currently inspecting the nearest mast."
+MOB_206,web_chat,My unlimited data plan was throttled to 64 Kbps although I only used 15 GB out of my 50 GB allowance. Fix this speed cap now.
+MOB_207,mobile_app,Requested number porting from previous operator 4 days ago. Old SIM stopped working and new SIM is still not activated.
+MOB_208,twitter,Cannot send or receive SMS messages since system update. Two-factor authentication for my email is completely blocked.
+MOB_209,call_center,SIM card suddenly locked asking for PUK code. Customer service hotline put me on hold for 45 minutes with no response.
+MOB_210,web_chat,Enormous battery drain and constant searching for mobile network signal. Is there a known outage in the area?

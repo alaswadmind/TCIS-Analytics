@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TCIS Executive Architecture & Technical Presentation</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- KaTeX for Math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Consolas', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #070d19; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+    .glow-indigo { box-shadow: 0 0 35px -5px rgba(99, 102, 241, 0.25); }
+    .glow-purple { box-shadow: 0 0 35px -5px rgba(168, 85, 247, 0.25); }
+    .glow-emerald { box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.25); }
+    .glow-amber { box-shadow: 0 0 35px -5px rgba(245, 158, 11, 0.25); }
+
+    .slide {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.35s ease-in-out;
+    }
+    .slide.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.35);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 50%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @keyframes pulse-slow {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.03); opacity: 1; }
+    }
+    .pulse-glow { animation: pulse-slow 4s infinite ease-in-out; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
+
+  <!-- Background Ambient Glows -->
+  <div class="fixed top-[-10%] right-[-10%] w-[550px] h-[550px] bg-indigo-600/15 rounded-full blur-[140px] pointer-events-none -z-10"></div>
+  <div class="fixed bottom-[-10%] left-[-10%] w-[550px] h-[550px] bg-purple-600/15 rounded-full blur-[140px] pointer-events-none -z-10"></div>
+  <div class="fixed top-[40%] left-[25%] w-[400px] h-[400px] bg-emerald-600/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+
+  <!-- Top Navigation & Controls Bar -->
+  <header class="sticky top-0 z-50 bg-slate-950/80 border-b border-slate-800/80 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Project Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+          <i class="fa-solid fa-tower-broadcast text-lg"></i>
+        </div>
+        <div>
+          <span class="font-black text-lg tracking-tight gradient-text">TCIS Presentation</span>
+          <span class="text-[11px] block text-slate-400 font-medium">Telecom Customer Intelligence System • Technical Architecture Deck</span>
+        </div>
+      </div>
+
+      <!-- Presentation Navigator Controls -->
+      <div class="flex items-center gap-2">
+        <button onclick="prevSlide()" class="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1.5 text-xs font-bold" title="Previous Slide (Right Arrow)">
+          <i class="fa-solid fa-chevron-left"></i>
+          <span class="hidden sm:inline">Previous</span>
+        </button>
+
+        <div class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-mono font-bold text-indigo-300 flex items-center gap-1">
+          <span id="current-slide-num">1</span>
+          <span class="text-slate-600">/</span>
+          <span id="total-slides-num">7</span>
+        </div>
+
+        <button onclick="nextSlide()" class="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1.5 text-xs font-bold shadow-md shadow-indigo-600/30" title="Next Slide (Left Arrow)">
+          <span class="hidden sm:inline">Next</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- View All Toggle -->
+        <button onclick="toggleScrollMode()" id="btn-toggle-scroll" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 hover:text-white transition font-medium mr-1" title="Toggle Full Document Scroll Mode">
+          <i class="fa-solid fa-scroll"></i>
+        </button>
+
+        <!-- Dashboard Link -->
+        <a href="/" target="_blank" class="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-bold transition flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span class="hidden md:inline">Live Studio</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Slide Progress Bar -->
+    <div class="w-full bg-slate-900 h-1">
+      <div id="slide-progress" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-300" style="width: 14.2%;"></div>
+    </div>
+  </header>
+
+  <!-- Presentation Main Container -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- ======================================================== -->
+    <!-- SLIDE 1: COVER & EXECUTIVE SUMMARY -->
+    <!-- ======================================================== -->
+    <div class="slide active" id="slide-1">
+      <div class="min-h-[75vh] flex flex-col justify-center items-center text-center space-y-8">
+        
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold tracking-wide">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
+          Enterprise Telecom Intelligence & Outage Surveillance (TCIS)
+        </div>
+
+        <div class="space-y-4 max-w-4xl">
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+            Telecom Customer Intelligence System <br>
+            <span class="gradient-text">Architectural & Analytical Overview</span>
+          </h1>
+          <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+            A production-ready AI platform uniting <b>RoBERTa / BERT</b> fine-tuned transformers, <b>BERTopic</b> dense clustering, and <b>Poisson Statistical Surveillance</b> to automate complaint detection, hierarchical taxonomy decoding, and real-time collective anomaly detection.
+          </p>
+        </div>
+
+        <!-- Metric Badges Ribbon -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-4xl pt-4">
+          <div class="glass-card rounded-2xl p-5 text-center glow-indigo">
+            <span class="text-xs text-indigo-300 font-bold block mb-1">Corpus Volume</span>
+            <span class="text-2xl lg:text-3xl font-black text-white font-mono">36,417</span>
+            <span class="text-[11px] text-slate-400 block mt-1">Complaints & Conversations</span>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 text-center glow-purple">
+            <span class="text-xs text-purple-300 font-bold block mb-1">Transformers (FP16)</span>
+            <span class="text-2xl lg:text-3xl font-black text-white font-mono">6 Models</span>
+            <span class="text-[11px] text-slate-400 block mt-1">Multi-task RoBERTa heads</span>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 text-center glow-emerald">
+            <span class="text-xs text-emerald-300 font-bold block mb-1">Semantic Clusters</span>
+            <span class="text-2xl lg:text-3xl font-black text-white font-mono">228 Clusters</span>
+            <span class="text-[11px] text-slate-400 block mt-1">BERTopic + UMAP + HDBSCAN</span>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 text-center glow-amber">
+            <span class="text-xs text-amber-300 font-bold block mb-1">Surveillance Watchdog</span>
+            <span class="text-2xl lg:text-3xl font-black text-white font-mono">Poisson 24h</span>
+            <span class="text-[11px] text-slate-400 block mt-1">FDR Benjamini-Hochberg</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 pt-4">
+          <button onclick="nextSlide()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition flex items-center gap-2">
+            <span>Explore System Architecture</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SLIDE 2: PROBLEM STATEMENT & CORE OBJECTIVES -->
+    <!-- ======================================================== -->
+    <div class="slide" id="slide-2">
+      <div class="space-y-6">
+        
+        <div class="border-b border-slate-800 pb-4">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider block mb-1">Core Problem & Solution</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white">The Carrier Challenge: Unstructured Feedback & Outage Latency</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+          
+          <div class="glass-card rounded-2xl p-6 space-y-4 border-rose-500/20">
+            <div class="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">The Operational Challenge</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Carriers handle massive volumes of incoming unstructured messages across digital channels. Manual human triaging introduces severe operational bottlenecks:
+            </p>
+            <ul class="text-xs text-slate-400 space-y-2 list-disc list-inside">
+              <li>Delayed detection of regional fiber cuts and localized cell tower outages.</li>
+              <li>Inability to prioritize high-risk churn signals over routine FAQs.</li>
+              <li>Taxonomy fragmentation: customer service agents assigning conflicting root causes.</li>
+              <li>False alarms caused by subjective complaint assessment without statistical validation.</li>
+            </ul>
+          </div>
+
+          <div class="glass-card rounded-2xl p-6 space-y-4 border-emerald-500/20 glow-emerald">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">The TCIS Intelligence Engine</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              A high-throughput analytical pipeline converting unstructured text into structured, actionable operational decisions in under one second:
+            </p>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i>
+                <span><b>Complaint & Sentiment Parsing:</b> Precise single-label scoring distinguishing actual grievances from inquiries.</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i>
+                <span><b>Constrained Hierarchy (L1 ➔ L2 ➔ L3):</b> Guaranteeing logical consistency between service domains and root causes.</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i>
+                <span><b>Proactive Outage Surveillance:</b> Statistical Poisson scanning alerting NOC teams before call center congestion occurs.</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i>
+                <span><b>Generative Incident Summaries:</b> Instant FLAN-T5 operational reports for engineering dispatch.</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SLIDE 3: DATA FLOW ARCHITECTURE DIAGRAM -->
+    <!-- ======================================================== -->
+    <div class="slide" id="slide-3">
+      <div class="space-y-6">
+        
+        <div class="border-b border-slate-800 pb-4">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider block mb-1">Architecture & Pipeline</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white">End-to-End Data Flow & Hierarchical Processing Pipeline</h2>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 space-y-6">
+          
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-3 relative">
+            
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 space-y-2 text-center hover:border-indigo-500 transition">
+              <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center mx-auto text-sm font-bold font-mono">01</div>
+              <h4 class="text-xs font-bold text-white">Input Ingestion</h4>
+              <p class="text-[10px] text-slate-400">Single customer messages and role-separated conversation turns</p>
+              <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-indigo-300 font-mono">API Payload</span>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 space-y-2 text-center hover:border-purple-500 transition">
+              <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto text-sm font-bold font-mono">02</div>
+              <h4 class="text-xs font-bold text-white">Taxonomy Parser</h4>
+              <p class="text-[10px] text-slate-400">Extracts services, issue categories, and confidence thresholds</p>
+              <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono">parse_cls()</span>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 space-y-2 text-center hover:border-pink-500 transition">
+              <div class="w-8 h-8 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center mx-auto text-sm font-bold font-mono">03</div>
+              <h4 class="text-xs font-bold text-white">RoBERTa Heads</h4>
+              <p class="text-[10px] text-slate-400">Parallel FP16 inference: complaint, sentiment, severity, services, L2, L3</p>
+              <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-pink-300 font-mono">6x Models</span>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 space-y-2 text-center hover:border-emerald-500 transition">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto text-sm font-bold font-mono">04</div>
+              <h4 class="text-xs font-bold text-white">Consistency Filter</h4>
+              <p class="text-[10px] text-slate-400">Dynamic mask enforcement ensuring $L1 \to L2 \to L3$ validity</p>
+              <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono">Masking Matrix</span>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 space-y-2 text-center hover:border-amber-500 transition">
+              <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto text-sm font-bold font-mono">05</div>
+              <h4 class="text-xs font-bold text-white">Poisson Surveillance</h4>
+              <p class="text-[10px] text-slate-400">BERTopic nearest cluster attribution and 24h spike evaluation</p>
+              <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono">q-value Test</span>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 space-y-2 text-center hover:border-cyan-500 transition">
+              <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mx-auto text-sm font-bold font-mono">06</div>
+              <h4 class="text-xs font-bold text-white">Triage & Summary</h4>
+              <p class="text-[10px] text-slate-400">FLAN-T5 structured generation, SLA priority score, and routing</p>
+              <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono">SLA & Action</span>
+            </div>
+
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between text-xs text-slate-400 font-mono overflow-x-auto">
+            <span>[Customer Input]</span>
+            <i class="fa-solid fa-arrow-right text-indigo-400"></i>
+            <span>MiniLM / MPNet Embeddings</span>
+            <i class="fa-solid fa-arrow-right text-purple-400"></i>
+            <span>UMAP Projection + HDBSCAN Density</span>
+            <i class="fa-solid fa-arrow-right text-emerald-400"></i>
+            <span>Constrained Decoding</span>
+            <i class="fa-solid fa-arrow-right text-amber-400"></i>
+            <span>[NOC & Support Dispatch]</span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SLIDE 4: AI MODELS ARSENAL & THEIR ROLES -->
+    <!-- ======================================================== -->
+    <div class="slide" id="slide-4">
+      <div class="space-y-6">
+        
+        <div class="border-b border-slate-800 pb-4">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider block mb-1">Model Infrastructure</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white">The AI Model Arsenal: Purpose-Built Specialized Heads</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          <div class="glass-card rounded-2xl p-4 space-y-2 border-indigo-500/30">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-xs font-bold">RoBERTa Base (FP16)</span>
+              <span class="text-[10px] text-slate-400 font-mono">Deep Transformer</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Core Multi-Task Classifier</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Fine-tuned and optimized with half-precision FP16 weights for sub-second inference across sentiment, severity, multi-label carrier services, and issue taxonomy.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-4 space-y-2 border-blue-500/30">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-xs font-bold">BERT Base Uncased</span>
+              <span class="text-[10px] text-slate-400 font-mono">Complaint Benchmark</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Complaint Detection Champion</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Recorded the highest Macro-F1 score (<b>0.903</b>) on message-level complaint detection, proving exceptionally sensitive to explicit grievances.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-4 space-y-2 border-amber-500/30">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-xs font-bold">LinearSVC (TF-IDF)</span>
+              <span class="text-[10px] text-slate-400 font-mono">Baseline Classifier</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Sparse L3 Issue Champion</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Achieved <b>0.775</b> Macro-F1 on message-level specific issues (L3), outperforming deep transformers on classes with very low sample frequencies.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-4 space-y-2 border-purple-500/30">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-xs font-bold">MPNet & MiniLM</span>
+              <span class="text-[10px] text-slate-400 font-mono">Sentence-Transformers</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Semantic Meaning Embeddings</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Mapped customer texts into dense 768-dimensional and 384-dimensional vector spaces, verified through nearest-neighbor purity against L2 issue labels.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-4 space-y-2 border-pink-500/30">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 text-xs font-bold">BERTopic & HDBSCAN</span>
+              <span class="text-[10px] text-slate-400 font-mono">Density Clustering</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Topic Discovery & Grouping</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Leveraged UMAP dimensionality reduction and HDBSCAN density clustering without forcing noise points, discovering 228 distinct operational complaint clusters.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-4 space-y-2 border-emerald-500/30">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-xs font-bold">Google FLAN-T5 Base</span>
+              <span class="text-[10px] text-slate-400 font-mono">Seq2Seq Generative</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Structured Incident Summarizer</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Trained to produce structured, one-line technical incident summaries detailing affected carrier service, primary symptom, and probable engineering cause.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SLIDE 5: MATHEMATICAL & STATISTICAL SURVEILLANCE -->
+    <!-- ======================================================== -->
+    <div class="slide" id="slide-5">
+      <div class="space-y-6">
+        
+        <div class="border-b border-slate-800 pb-4">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider block mb-1">Mathematical Foundations</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white">Poisson Surveillance, False Discovery Rate & Constrained Hierarchy</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <div class="glass-card rounded-2xl p-6 space-y-4 border-amber-500/30 glow-amber">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-amber-400 uppercase">Temporal Surveillance • Poisson Process</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 font-mono">24h Sliding Window</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">The 24h Poisson Outage Detection Engine</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              To determine whether a cluster spike represents a genuine incident or normal random variance, the system scans timestamps in a sliding 24-hour window ($W=24$) and computes the Poisson survival function:
+            </p>
+            
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center font-mono text-xs text-amber-300">
+              $$P(X \ge k) = 1 - \sum_{i=0}^{k-1} \frac{\lambda^i e^{-\lambda}}{i!}$$
+              <span class="text-[10px] text-slate-400 block mt-1">where $\lambda = \frac{N \cdot W}{\text{span}}$ is the baseline expected rate, and $k$ is the observed count.</span>
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Extreme low probabilities ($p < 0.001$) signal statistically significant surges that cannot be explained by random customer inquiry fluctuations.
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            
+            <div class="glass-card rounded-2xl p-5 space-y-2 border-emerald-500/30">
+              <div class="flex items-center justify-between">
+                <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                  <i class="fa-solid fa-filter text-emerald-400"></i> Benjamini-Hochberg FDR Control (q-value)
+                </h4>
+                <span class="text-[10px] text-slate-400 font-mono">Multiple Testing</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Evaluating 228 clusters simultaneously drastically increases false positive risks. TCIS applies Benjamini-Hochberg False Discovery Rate (FDR) adjustments, computing adjusted $q\text{-values}$ to ensure only alerts with $q \le 0.01$ trigger operational escalation.
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 space-y-2 border-purple-500/30">
+              <div class="flex items-center justify-between">
+                <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                  <i class="fa-solid fa-sitemap text-purple-400"></i> Constrained Hierarchical Decoding
+                </h4>
+                <span class="text-[10px] text-slate-400 font-mono">Taxonomy Consistency</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Raw neural classifiers can predict contradictory levels (e.g. Internet service with a SIM swap issue). TCIS applies a dynamic boolean mask $M_2$ and $M_3$ derived from carrier ground truth, restricting child argmax selections to legitimate taxonomy branches.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SLIDE 6: BENCHMARK MATRIX & EVALUATION RESULTS -->
+    <!-- ======================================================== -->
+    <div class="slide" id="slide-6">
+      <div class="space-y-6">
+        
+        <div class="border-b border-slate-800 pb-4">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider block mb-1">Empirical Benchmark</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white">Evaluation Matrix on Held-out Test Split (Macro-F1)</h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <div class="lg:col-span-7 glass-card rounded-2xl p-4 overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300 font-mono divide-y divide-slate-800">
+              <thead class="text-slate-400 font-bold bg-slate-900/60">
+                <tr>
+                  <th class="p-2.5">Task</th>
+                  <th class="p-2.5">RoBERTa</th>
+                  <th class="p-2.5">LinearSVC</th>
+                  <th class="p-2.5">LogReg</th>
+                  <th class="p-2.5">BERT</th>
+                  <th class="p-2.5 text-emerald-400">Winner</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono text-[11px]">
+                <tr>
+                  <td class="p-2 font-bold text-white">msg/sentiment</td>
+                  <td class="p-2 text-emerald-400 font-bold bg-emerald-950/30">0.931</td>
+                  <td class="p-2">0.727</td>
+                  <td class="p-2">0.735</td>
+                  <td class="p-2">—</td>
+                  <td class="p-2 text-emerald-400 font-bold">RoBERTa</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-white">msg/complaint</td>
+                  <td class="p-2">0.897</td>
+                  <td class="p-2">0.761</td>
+                  <td class="p-2">0.754</td>
+                  <td class="p-2 text-emerald-400 font-bold bg-emerald-950/30">0.903</td>
+                  <td class="p-2 text-emerald-400 font-bold">BERT</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-white">msg/services</td>
+                  <td class="p-2 text-emerald-400 font-bold bg-emerald-950/30">0.776</td>
+                  <td class="p-2">—</td>
+                  <td class="p-2">0.689</td>
+                  <td class="p-2">—</td>
+                  <td class="p-2 text-emerald-400 font-bold">RoBERTa</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-white">msg/severity</td>
+                  <td class="p-2 text-emerald-400 font-bold bg-emerald-950/30">0.765</td>
+                  <td class="p-2">0.675</td>
+                  <td class="p-2">0.669</td>
+                  <td class="p-2">—</td>
+                  <td class="p-2 text-emerald-400 font-bold">RoBERTa</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-white">msg/L3</td>
+                  <td class="p-2">0.415</td>
+                  <td class="p-2 text-emerald-400 font-bold bg-emerald-950/30">0.775</td>
+                  <td class="p-2">0.763</td>
+                  <td class="p-2">—</td>
+                  <td class="p-2 text-emerald-400 font-bold">LinearSVC</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-white">conv/sentiment</td>
+                  <td class="p-2 text-emerald-400 font-bold bg-emerald-950/30">0.790</td>
+                  <td class="p-2">0.527</td>
+                  <td class="p-2">0.530</td>
+                  <td class="p-2">—</td>
+                  <td class="p-2 text-emerald-400 font-bold">RoBERTa</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-white">conv/complaint</td>
+                  <td class="p-2 text-emerald-400 font-bold bg-emerald-950/30">0.567</td>
+                  <td class="p-2">0.515</td>
+                  <td class="p-2">0.524</td>
+                  <td class="p-2">—</td>
+                  <td class="p-2 text-emerald-400 font-bold">RoBERTa</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="lg:col-span-5 space-y-3">
+            <div class="glass-card rounded-2xl p-4 border-indigo-500/30 space-y-1">
+              <span class="text-xs font-bold text-indigo-400 block">1. Why Macro-F1?</span>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                Extreme class imbalance in telecom logs means models can score 90%+ Accuracy simply by predicting dominant classes. Macro-F1 weights rare categories equally.
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 border-emerald-500/30 space-y-1">
+              <span class="text-xs font-bold text-emerald-400 block">2. LinearSVC on Fine-Grained L3</span>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                LinearSVC scored <b>0.775</b> vs RoBERTa's <b>0.415</b> on specific issues, proving that regularized linear baselines excel when fine-grained categories have limited training samples.
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 border-purple-500/30 space-y-1">
+              <span class="text-xs font-bold text-purple-400 block">3. RoBERTa Context Dominance</span>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                RoBERTa dominated semantic sentiment (<b>0.931</b>) and multi-label services (<b>0.776</b>) through its bidirectional masked attention mechanism.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SLIDE 7: ACTIVE OUTAGE CASES & OPERATIONAL VALUE -->
+    <!-- ======================================================== -->
+    <div class="slide" id="slide-7">
+      <div class="space-y-6">
+        
+        <div class="border-b border-slate-800 pb-4">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider block mb-1">Operational Value</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white">Validated Anomaly Incidents & Enterprise Impact</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <div class="glass-card rounded-2xl p-5 space-y-3 border-rose-500/40 glow-indigo">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                Potential Anomaly Detected
+              </span>
+              <span class="text-xs text-slate-400 font-mono">Cluster #3</span>
+            </div>
+            <h4 class="text-base font-bold text-white">Promotional iPhone Trade-in Billing Surge (3_iphone_deal_upgrade_trade)</h4>
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 space-y-1">
+              <div>Surveillance Window: <span class="text-white">7 complaints in 24 hours (35 total members)</span></div>
+              <div>Poisson Scan p-value: <span class="text-emerald-400">0.000116</span></div>
+              <div>Adjusted q-value: <span class="text-emerald-400 font-bold">0.004881 (FDR &lt; 0.01)</span></div>
+              <div>Impacted Services: <span class="text-indigo-300">subscription_plans, billing_payments</span></div>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              <b>Operational Outcome:</b> Enabled commercial billing teams to patch an automated promo discount glitch before retail call center queues surged.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 space-y-3 border-amber-500/40 glow-amber">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                Watchlist Candidate
+              </span>
+              <span class="text-xs text-slate-400 font-mono">Cluster #101</span>
+            </div>
+            <h4 class="text-base font-bold text-white">Support Web Portal Outage (101_company tuesday_website)</h4>
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 space-y-1">
+              <div>Surveillance Window: <span class="text-white">4 complaints in 24 hours (8 total members)</span></div>
+              <div>Poisson Scan p-value: <span class="text-emerald-400">0.000592</span></div>
+              <div>Adjusted q-value: <span class="text-emerald-400 font-bold">0.012423</span></div>
+              <div>Outage Keywords Rate: <span class="text-rose-400">75% of customer messages</span></div>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              <b>Operational Outcome:</b> Immediate alert dispatched to IT operations regarding customer account login gateway degradation.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="bg-gradient-to-r from-indigo-950/60 via-purple-950/40 to-slate-900 p-6 rounded-2xl border border-indigo-500/30 text-center space-y-3">
+          <h3 class="text-lg font-bold text-white">Platform Ready for Production Triage</h3>
+          <p class="text-xs text-slate-300 max-w-xl mx-auto">
+            TCIS provides an end-to-end multi-task inference pipeline and live surveillance dashboard with sub-second execution speeds.
+          </p>
+          <div class="pt-2">
+            <a href="/" target="_blank" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition">
+              <i class="fa-solid fa-play"></i>
+              <span>Open Live Analytics Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+    let isScrollMode = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateSlideDisplay();
+      
+      document.addEventListener("keydown", (e) => {
+        if (isScrollMode) return;
+        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+          nextSlide();
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          prevSlide();
+        }
+      });
+
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body);
+      }
+    });
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideDisplay();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideDisplay();
+      }
+    }
+
+    function updateSlideDisplay() {
+      if (isScrollMode) return;
+
+      document.querySelectorAll(".slide").forEach((el, index) => {
+        if (index + 1 === currentSlide) {
+          el.classList.add("active");
+        } else {
+          el.classList.remove("active");
+        }
+      });
+
+      document.getElementById("current-slide-num").innerText = currentSlide;
+      document.getElementById("total-slides-num").innerText = totalSlides;
+      
+      const pct = (currentSlide / totalSlides) * 100;
+      document.getElementById("slide-progress").style.width = `${pct}%`;
+      
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function toggleScrollMode() {
+      isScrollMode = !isScrollMode;
+      const btn = document.getElementById("btn-toggle-scroll");
+
+      if (isScrollMode) {
+        document.querySelectorAll(".slide").forEach(el => {
+          el.classList.add("active");
+          el.classList.add("mb-16", "pt-6", "border-t", "border-slate-800/80");
+        });
+        btn.innerHTML = '<i class="fa-solid fa-table-columns text-indigo-400"></i>';
+        btn.title = "Switch to Slides Mode";
+      } else {
+        document.querySelectorAll(".slide").forEach(el => {
+          el.classList.remove("mb-16", "pt-6", "border-t", "border-slate-800/80");
+        });
+        updateSlideDisplay();
+        btn.innerHTML = '<i class="fa-solid fa-scroll"></i>';
+        btn.title = "Switch to Full Document Scroll Mode";
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+id,channel,text
+FIBER_101,twitter,"@telecom_help My optical fiber internet has been down since 7 AM. The router LOS light is flashing red. Urgent help needed, working remotely!"
+FIBER_102,web_chat,Paying for 500 Mbps fiber speed but speedtest shows barely 3 Mbps tonight. High latency and packet loss makes Zoom calls disconnect.
+FIBER_103,mobile_app,Third outage this week in our district. Gateway router keeps rebooting constantly and DSL connection drops every 5 minutes.
+FIBER_104,twitter,"[CUSTOMER] The internet connection dropped right during my final exam!
+[COMPANY] We apologize for the issue. Please send us your account number via DM."
+FIBER_105,call_center,DNS resolution failure on my fiber gateway. Cannot load any websites although the wifi light is green.
+FIBER_106,email,"Technician promised to visit between 2 PM and 4 PM to fix the optical line cut, but nobody showed up. Unacceptable customer support."
+FIBER_107,web_chat,The fiber modem is overheating and the power adapter is making a loud buzzing sound. Need a replacement equipment ASAP.
+FIBER_108,twitter,Complete broadband black out across the downtown neighborhood. Is there an official scheduled maintenance or general service outage?
+FIBER_109,mobile_app,Ethernet cable works fine but 5GHz wifi band disappeared completely from the router settings. Please guide me.
+FIBER_110,web_chat,Charged twice on my monthly fiber invoice after I upgraded to Gigabit speed. Requesting immediate refund of the overcharge.

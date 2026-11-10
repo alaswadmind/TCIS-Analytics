@@ -1,0 +1,79 @@
+{
+  "bertopic_topics": [
+    {"topic": 0, "count": 222, "name": "0_4g_3g_speed_2g", "representative_words": ["4g", "3g", "speed", "2g", "network", "slow", "data"], "category": "mobile_network"},
+    {"topic": 1, "count": 158, "name": "1_internet internet_internet_help internet_internet connection", "representative_words": ["internet", "connection", "help", "down", "modem", "router", "service"], "category": "internet_service"},
+    {"topic": 2, "count": 143, "name": "2_mobilecarexi_mobilecare_mobilecarexi internet_mobilecarexi phone", "representative_words": ["mobilecare", "phone", "account", "support", "agent"], "category": "customer_support"},
+    {"topic": 3, "count": 104, "name": "3_iphone_deal_upgrade_trade", "representative_words": ["iphone", "deal", "upgrade", "trade", "apple", "device", "promotion"], "category": "subscription_plans"},
+    {"topic": 4, "count": 99, "name": "4_issue_issue company_resolved_issue resolved", "representative_words": ["issue", "resolved", "pending", "unresolved", "ticket", "followup"], "category": "customer_support"},
+    {"topic": 5, "count": 97, "name": "5_overcharged_lower_fees_hidden", "representative_words": ["overcharged", "lower", "fees", "hidden", "bill", "balance", "refund"], "category": "billing_payments"},
+    {"topic": 6, "count": 94, "name": "6_customer service_worst customer_customer_user customer", "representative_words": ["customer service", "worst", "rude", "poor", "unhelpful"], "category": "customer_support"},
+    {"topic": 7, "count": 84, "name": "7_user worst_worst internet_worst_worst network", "representative_words": ["worst", "terrible", "bad network", "worst internet", "frustrating"], "category": "internet_service"},
+    {"topic": 8, "count": 82, "name": "8_airtime_borrow_transfer airtime_check airtime", "representative_words": ["airtime", "borrow", "transfer", "credit", "recharge", "balance"], "category": "billing_payments"},
+    {"topic": 9, "count": 79, "name": "9_unlimited data_unlimited_data_data unlimited", "representative_words": ["unlimited", "data", "throttle", "cap", "plan", "gigabytes"], "category": "mobile_data"},
+    {"topic": 10, "count": 73, "name": "10_lte_bars_3g_company lte", "representative_words": ["lte", "bars", "signal", "coverage", "tower", "reception"], "category": "mobile_network"},
+    {"topic": 11, "count": 72, "name": "11_signal_signal signal_signal day_signal home", "representative_words": ["signal", "no signal", "dead zone", "coverage", "indoor"], "category": "mobile_network"},
+    {"topic": 12, "count": 68, "name": "12_yes company_company yes_yes_did company", "representative_words": ["confirm", "verify", "identity", "message", "response"], "category": "customer_support"},
+    {"topic": 13, "count": 66, "name": "13_texas_internet san_antonio_san antonio", "representative_words": ["regional", "area outage", "city", "location", "neighborhood"], "category": "internet_service"},
+    {"topic": 14, "count": 65, "name": "14_recharge_idea_balance_recharged", "representative_words": ["recharge", "top up", "balance", "deducted", "payment"], "category": "billing_payments"},
+    {"topic": 15, "count": 65, "name": "15_number_company phone_phone company_number change", "representative_words": ["number", "porting", "transfer number", "lost", "change"], "category": "number_sim"},
+    {"topic": 16, "count": 64, "name": "16_user user_user_help user_question", "representative_words": ["question", "inquiry", "how to", "guide", "procedure"], "category": "customer_support"},
+    {"topic": 17, "count": 63, "name": "17_sim_sim card_swap_sim swap", "representative_words": ["sim", "sim card", "swap", "activate", "puk", "unregistered"], "category": "number_sim"},
+    {"topic": 18, "count": 62, "name": "18_mobile number_mobile_number_verification", "representative_words": ["otp", "verification", "sms", "code", "bank", "security"], "category": "number_sim"},
+    {"topic": 19, "count": 62, "name": "19_slow internet_slow_internet slow_having slow", "representative_words": ["slow", "buffering", "speed test", "lag", "latency", "fiber"], "category": "internet_service"},
+    {"topic": 101, "count": 8, "name": "101_company tuesday_tuesday_website_company tuesday", "representative_words": ["website", "login", "portal", "tuesday", "app crash", "system down"], "category": "technical_support"},
+    {"topic": 135, "count": 14, "name": "135_light_blinking_red_green", "representative_words": ["blinking", "red light", "los", "green", "router", "pon", "modem"], "category": "internet_service"}
+  ],
+  "collective_alerts": [
+    {
+      "cluster_id": 3,
+      "topic": "3_iphone_deal_upgrade_trade",
+      "window_start": "2017-10-26 15:48:27 UTC",
+      "count_24h": 7,
+      "total_members": 35,
+      "p_scan": 0.000116,
+      "q_value": 0.004881,
+      "company_ack_rate": 0.11,
+      "outage_terms_rate": 0.26,
+      "alert_level": "Potential Anomaly",
+      "services": ["subscription_plans", "billing_payments"],
+      "explanation_en": "Detected an acute surge (7 complaints in 24h with Poisson p-value < 0.001 and FDR q-value = 0.0049) regarding iPhone promotions and trade-in billing disputes, flagged as a potential operational campaign incident."
+    },
+    {
+      "cluster_id": 101,
+      "topic": "101_company tuesday_tuesday_website_company tuesday",
+      "window_start": "2017-11-07 16:02:11 UTC",
+      "count_24h": 4,
+      "total_members": 8,
+      "p_scan": 0.000592,
+      "q_value": 0.012423,
+      "company_ack_rate": 0.25,
+      "outage_terms_rate": 0.75,
+      "alert_level": "Watchlist Candidate",
+      "services": ["technical_support", "customer_support"],
+      "explanation_en": "Detected a concentration of 4 complaints in 24h with 75% outage keywords relating to customer web portal and Tuesday account login downtime; marked as priority watchlist for IT infrastructure."
+    }
+  ],
+  "daily_service_spikes": [
+    {"day": "2017-11-21", "service": "subscription_plans", "z_score": 4.68, "count": 8, "status": "Critical Surge"},
+    {"day": "2017-10-27", "service": "subscription_plans", "z_score": 3.54, "count": 6, "status": "Elevated Volume"},
+    {"day": "2017-11-21", "service": "mobile_data", "z_score": 3.53, "count": 5, "status": "Elevated Volume"},
+    {"day": "2017-11-14", "service": "billing_payments", "z_score": 3.32, "count": 6, "status": "Elevated Volume"},
+    {"day": "2017-10-27", "service": "billing_payments", "z_score": 3.27, "count": 5, "status": "Elevated Volume"},
+    {"day": "2017-11-06", "service": "number_sim", "z_score": 3.04, "count": 5, "status": "Elevated Volume"},
+    {"day": "2017-10-04", "service": "mobile_network", "z_score": 3.00, "count": 3, "status": "Elevated Volume"}
+  ],
+  "model_comparison_matrix": [
+    {"task": "conv/L2", "RoBERTa": 0.121, "LinearSVC": 0.317, "LogisticRegression": 0.234, "MultinomialNB": 0.064, "BERT": null, "DeBERTa": null, "best_model": "LinearSVC"},
+    {"task": "conv/L3", "RoBERTa": 0.125, "LinearSVC": 0.282, "LogisticRegression": 0.173, "MultinomialNB": 0.069, "BERT": null, "DeBERTa": null, "best_model": "LinearSVC"},
+    {"task": "conv/complaint", "RoBERTa": 0.567, "LinearSVC": 0.515, "LogisticRegression": 0.524, "MultinomialNB": 0.318, "BERT": null, "DeBERTa": null, "best_model": "RoBERTa"},
+    {"task": "conv/sentiment", "RoBERTa": 0.790, "LinearSVC": 0.527, "LogisticRegression": 0.530, "MultinomialNB": 0.236, "BERT": null, "DeBERTa": null, "best_model": "RoBERTa"},
+    {"task": "conv/services", "RoBERTa": 0.449, "LinearSVC": null, "LogisticRegression": 0.485, "MultinomialNB": 0.191, "BERT": null, "DeBERTa": null, "best_model": "LogisticRegression"},
+    {"task": "conv/severity", "RoBERTa": 0.416, "LinearSVC": 0.428, "LogisticRegression": 0.421, "MultinomialNB": 0.295, "BERT": null, "DeBERTa": null, "best_model": "LinearSVC"},
+    {"task": "msg/L2", "RoBERTa": 0.393, "LinearSVC": 0.494, "LogisticRegression": 0.493, "MultinomialNB": 0.100, "BERT": null, "DeBERTa": null, "best_model": "LinearSVC"},
+    {"task": "msg/L3", "RoBERTa": 0.415, "LinearSVC": 0.775, "LogisticRegression": 0.763, "MultinomialNB": 0.223, "BERT": null, "DeBERTa": null, "best_model": "LinearSVC"},
+    {"task": "msg/complaint", "RoBERTa": 0.897, "LinearSVC": 0.761, "LogisticRegression": 0.754, "MultinomialNB": 0.568, "BERT": 0.903, "DeBERTa": 0.095, "best_model": "BERT"},
+    {"task": "msg/sentiment", "RoBERTa": 0.931, "LinearSVC": 0.727, "LogisticRegression": 0.735, "MultinomialNB": 0.507, "BERT": null, "DeBERTa": null, "best_model": "RoBERTa"},
+    {"task": "msg/services", "RoBERTa": 0.776, "LinearSVC": null, "LogisticRegression": 0.689, "MultinomialNB": 0.474, "BERT": null, "DeBERTa": null, "best_model": "RoBERTa"},
+    {"task": "msg/severity", "RoBERTa": 0.765, "LinearSVC": 0.675, "LogisticRegression": 0.669, "MultinomialNB": 0.435, "BERT": null, "DeBERTa": null, "best_model": "RoBERTa"}
+  ]
+}
